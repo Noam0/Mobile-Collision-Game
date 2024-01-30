@@ -1,5 +1,8 @@
 package com.example.colisiongame;
-
+import android.content.Context;
+import android.os.Build;
+import android.os.VibrationEffect;
+import android.os.Vibrator;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
@@ -9,6 +12,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.GridLayout;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 
 import com.example.colisiongame.Logic.GameManager;
 import com.example.colisiongame.Model.Obstacle;
@@ -28,6 +32,7 @@ public class MainActivity extends AppCompatActivity {
     private FloatingActionButton main_button_right;
     private GameManager gameManager;
     private Handler handler = new Handler(Looper.getMainLooper());
+    private boolean isGameRunning = true;
     private static final String TAG = "ObstacleMovement";
 
 
@@ -38,13 +43,11 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         findViews();
-        relativeLayouts = getAllRelativeLayouts();
+        relativeLayouts = getAllRelativeLayouts(); //find all relativeLayouts from the grid layout matrix
         main_button_left.setOnClickListener(view -> moveLeft());
         main_button_right.setOnClickListener(view -> moveRight());
         gameManager = new GameManager();
         startGameLoop();
-
-
 
 
     }
@@ -95,17 +98,21 @@ public class MainActivity extends AppCompatActivity {
         int currentLane = gameManager.getMainCharacter().getPositionX();
         int newLane = currentLane + 1;
 
+
         if (newLane < MAIN_LAYOUT_GRID.getColumnCount()) {
             RelativeLayout currentRelativeLayout = relativeLayouts[6][currentLane];
             currentRelativeLayout.removeView(main_IMG_character);
             RelativeLayout newRelativeLayout = relativeLayouts[6][newLane];
             newRelativeLayout.addView(main_IMG_character);
             gameManager.getMainCharacter().setPositionX(newLane);
+
         }
     }
     public void moveLeft() {
+
         int currentLane = gameManager.getMainCharacter().getPositionX();
         int newLane = currentLane - 1;
+
 
         if (newLane >= 0) {
             RelativeLayout currentRelativeLayout = relativeLayouts[6][currentLane];
@@ -115,6 +122,8 @@ public class MainActivity extends AppCompatActivity {
             newRelativeLayout.addView(main_IMG_character);
             // Update the lane in the game manager
             gameManager.getMainCharacter().setPositionX(newLane);
+
+
 
         }
 
@@ -131,13 +140,18 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void run() {
 
-                ObstacleViewMovement();
+                if (!isGameRunning) {
+                    return; // Stop the loop if the game is not running
+                }
+
+                ObstacleViewMovement(); //move the obstacle one line below each time
                 startGameLoop();
 
                 int randomDisplay = generateRandomNumber();
-                if (randomDisplay == 1 && gameManager.getObstacles().size() < 4){
+                if (randomDisplay == 1 && gameManager.getObstacles().size() < gameManager.getMaxNumberOfObstacles()){
                     createNewObstacle();
                 }
+                Log.d(TAG, "number of obstacles right now: " + gameManager.getObstacles().size());
             }
         }, 750); // TIMIMG OF THE OBSTACLES
     }
@@ -149,8 +163,7 @@ public class MainActivity extends AppCompatActivity {
 
             if (posY < MAIN_LAYOUT_GRID.getRowCount()) {
 
-                Log.d(TAG, "Before - posX: " + posX + " posY: " + posY);
-
+                //remove the obstacle image from the grid layouts.
                 RelativeLayout currentRelativeLayout = relativeLayouts[posY][posX];
                 currentRelativeLayout.removeView(obstacle.getShapeableImageView());
 
@@ -158,14 +171,13 @@ public class MainActivity extends AppCompatActivity {
                 int newPosY = posY + 1;
                 obstacle.setPositionY(newPosY);
 
-                Log.d(TAG, "After - posX: " + posX + " newPosY: " + newPosY);
-
-
-
                 if (newPosY < gameManager.getNumberOfRows()) {
+                    //add the obstacle image to next line in the grid layouts.
                     RelativeLayout newRelativeLayout = relativeLayouts[newPosY][posX];
                     newRelativeLayout.addView(obstacle.getShapeableImageView());
+
                 }else if(newPosY == relativeLayouts.length){
+                    //update the obstacle image to the start of the rows in the grid layouts.
                     obstacle.setToStartOfRoad();
                     int newXPos = obstacle.getPositionX();
                     RelativeLayout newRelativeLayout = relativeLayouts[0][newXPos];
@@ -173,6 +185,7 @@ public class MainActivity extends AppCompatActivity {
                 }
 
                 if(obstacle.getPositionY() == gameManager.getNumberOfRows()-2) {
+                    //if the obstacle is in the same line of the main character, check collosion
                     checkCollosion(obstacle);
                 }
             }
@@ -183,7 +196,6 @@ public class MainActivity extends AppCompatActivity {
         ShapeableImageView obstacleImageView = new ShapeableImageView(this);
         obstacleImageView.setImageResource(R.drawable.terrorist2); // Set your obstacle image resource here
         Obstacle obstacle = new Obstacle(generateRandomNumber(),obstacleImageView);
-
 
         // Set layout parameters as needed
         RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(
@@ -212,40 +224,67 @@ public class MainActivity extends AppCompatActivity {
     public void checkCollosion(Obstacle obstacle){
 
         boolean collosion = gameManager.checkCollosionInGameManager(obstacle);
-        if(collosion == true){
-            Log.d(TAG, "checkCollosion: collosion happend");
-            if(gameManager.getLife() - gameManager.getNumOfCollosions()>0) {
-                main_IMG_hearts[gameManager.getLife() - 1 - gameManager.getNumOfCollosions()].setVisibility(View.INVISIBLE);
-            }
-        }
-
-
-            //vibration
-
-
+        if(collosion) {
+            refreshHeartImages();
+            vibration();
+            createToast();
             //sound
-
+        }
 
     }
 
 
+    public void refreshHeartImages(){
+
+            if(gameManager.getLife() >= 0) {
+                main_IMG_hearts[gameManager.getNumOfCollosions()-1].setVisibility(View.INVISIBLE);
+            }
+
+    }
 
     public int generateRandomNumber() {
 
         Random random = new Random();
-
-        // Generate a random number between 0 and 2 (inclusive)
+        // Generate a random number between 0 and 2
         int randomNumber = random.nextInt(3);
-        Log.d(TAG, "generateRandomNumber: " + randomNumber);
-
         return randomNumber;
     }
 
 
+    public void vibration(){
 
+        Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+        // Vibrate for 500 milliseconds
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            v.vibrate(VibrationEffect.createOneShot(300, VibrationEffect.DEFAULT_AMPLITUDE));
+        } else {
+            //deprecated in API 26
+            v.vibrate(300);
+        }
 
+    }
 
+    public void createToast(){
+        CharSequence text = "oops!";
+        int duration = Toast.LENGTH_SHORT;
+        Toast toast = Toast.makeText(this , text, duration);
+        toast.show();
+    }
 
+    @Override
+    protected void onStop() {
+        super.onStop();
+        isGameRunning = false;
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (!isGameRunning) {
+            isGameRunning = true;
+            startGameLoop();
+        }
+    }
 }
 
 

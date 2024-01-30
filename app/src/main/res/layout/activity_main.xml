@@ -4,16 +4,16 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/background"
+    android:background="@drawable/background4"
     tools:context=".MainActivity">
 
 
     <!--- heart layout -->
     <androidx.appcompat.widget.LinearLayoutCompat
-        android:layout_width="92dp"
-        android:layout_height="30dp"
+        android:layout_width="100dp"
+        android:layout_height="40dp"
         android:layout_alignParentEnd="true"
-        android:layout_marginTop="2dp"
+        android:layout_marginTop="6dp"
         android:layout_marginEnd="24dp"
         android:orientation="horizontal">
 
@@ -374,15 +374,13 @@
 
 
     <!--- Buttons right and left layout container-->
-    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
+    <RelativeLayout
         android:gravity="center_horizontal"
         android:layout_width="match_parent"
         android:layout_height="90dp"
-        android:layout_marginRight="16dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginBottom="8dp"
+        android:layout_marginRight="18dp"
+        android:layout_marginLeft="18dp"
+        android:layout_marginBottom="2dp"
         android:layout_alignParentBottom="true"
         tools:context=".MainActivity">
 
@@ -391,9 +389,13 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="end|bottom"
-            android:src="@drawable/baseline_arrow_back_24"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="16dp"
             android:contentDescription="left Floating Button"
-            android:layout_margin="16dp" />
+            app:backgroundTint="#ce925d"
+            android:src="@drawable/baseline_arrow_back_24" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/main_button_right"
@@ -402,6 +404,8 @@
             android:layout_alignParentEnd="true"
             android:contentDescription="right Floating Button"
             android:src="@drawable/baseline_arrow_forward_24"
+            app:backgroundTint="#ce925d"
+
             android:layout_margin="16dp" />
 
     </RelativeLayout>

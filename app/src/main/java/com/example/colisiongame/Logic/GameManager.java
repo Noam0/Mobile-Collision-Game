@@ -8,20 +8,18 @@ import java.util.Set;
 
 public class GameManager {
 
-    private int life;
+    private int life = 3;
     private int numOfCollosions = 0;
     private int numberOfLanes = 3;
     private int numberOfRows = 8;
-
     private mainCharacter mainCharacter;
     private Set<Obstacle> obstacles;
-    private int numberOfObstacles;
+    private int numberOfObstacles = 0;
     private int maxNumberOfObstacles = 4;
+
 
     public GameManager() {
 
-        life = 3;
-        numberOfObstacles = 0;
         obstacles = new HashSet<>();
         mainCharacter = new mainCharacter();
     }
@@ -63,6 +61,10 @@ public class GameManager {
         return this;
     }
 
+    public int getMaxNumberOfObstacles() {
+        return maxNumberOfObstacles;
+    }
+
     public int getNumberOfRows() {
         return numberOfRows;
     }
@@ -82,12 +84,16 @@ public class GameManager {
 
     public boolean checkCollosionInGameManager(Obstacle obstacle){
         if(this.mainCharacter.getPositionX() == obstacle.getPositionX()){
-            this.numOfCollosions++;
+            numOfCollosions++;
+            life--;
             return true;
         }
 
         return false;
     }
+
+
+
 
 }
 
