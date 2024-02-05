@@ -4,7 +4,7 @@
   <p>Collision Game is a project developed as part of the Mobile Applications course in the Software Engineering degree.
    The inspiration behind the design of the app is drawn from the heroic story of Rachel from the city of Ofakim on the seventh of October.</p>
   
-
+<p>All objects were created and designed using Photoshop and the Notability app by me</p>
 https://github.com/Noam0/Mobile-Collosion-Game/assets/101128914/bf26553c-81ca-41e5-8aba-085a69691258
 
 
