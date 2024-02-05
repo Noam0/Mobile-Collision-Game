@@ -35,6 +35,9 @@ public class MainActivity extends AppCompatActivity {
     private boolean isGameRunning = true;
     private static final String TAG = "ObstacleMovement";
 
+    private final int MAINLOOPTIMING = 750;
+    private final int VIBRATIONTIMING = 300;
+
 
 
     @Override
@@ -99,12 +102,14 @@ public class MainActivity extends AppCompatActivity {
         int newLane = currentLane + 1;
 
 
-        if (newLane < MAIN_LAYOUT_GRID.getColumnCount()) {
-            RelativeLayout currentRelativeLayout = relativeLayouts[6][currentLane];
-            currentRelativeLayout.removeView(main_IMG_character);
-            RelativeLayout newRelativeLayout = relativeLayouts[6][newLane];
-            newRelativeLayout.addView(main_IMG_character);
+        if (newLane < gameManager.getNumberOfLanes()) {
+            changeLayoutOfMainCharacterIMG(currentLane, newLane);
+            // Update the lane in the game manager
             gameManager.getMainCharacter().setPositionX(newLane);
+            //check if the main character gets into one of the obstacles
+            if(gameManager.checkCollosionWhenMainCharacterMove()){
+                collosionHappendUI();
+            }
 
         }
     }
@@ -115,15 +120,13 @@ public class MainActivity extends AppCompatActivity {
 
 
         if (newLane >= 0) {
-            RelativeLayout currentRelativeLayout = relativeLayouts[6][currentLane];
-            currentRelativeLayout.removeView(main_IMG_character);
-
-            RelativeLayout newRelativeLayout = relativeLayouts[6][newLane];
-            newRelativeLayout.addView(main_IMG_character);
+            changeLayoutOfMainCharacterIMG(currentLane, newLane);
             // Update the lane in the game manager
             gameManager.getMainCharacter().setPositionX(newLane);
-
-
+            //check if the main character gets into one of the obstacles
+           if(gameManager.checkCollosionWhenMainCharacterMove()){
+               collosionHappendUI();
+           }
 
         }
 
@@ -151,9 +154,9 @@ public class MainActivity extends AppCompatActivity {
                 if (randomDisplay == 1 && gameManager.getObstacles().size() < gameManager.getMaxNumberOfObstacles()){
                     createNewObstacle();
                 }
-                Log.d(TAG, "number of obstacles right now: " + gameManager.getObstacles().size());
+
             }
-        }, 750); // TIMIMG OF THE OBSTACLES
+        }, MAINLOOPTIMING); // TIMIMG OF THE OBSTACLES
     }
 
     public void ObstacleViewMovement() {
@@ -177,11 +180,12 @@ public class MainActivity extends AppCompatActivity {
                     newRelativeLayout.addView(obstacle.getShapeableImageView());
 
                 }else if(newPosY == relativeLayouts.length){
-                    //update the obstacle image to the start of the rows in the grid layouts.
+                    //bring the obstacle back to the first row
                     obstacle.setToStartOfRoad();
                     int newXPos = obstacle.getPositionX();
                     RelativeLayout newRelativeLayout = relativeLayouts[0][newXPos];
                     newRelativeLayout.addView(obstacle.getShapeableImageView());
+
                 }
 
                 if(obstacle.getPositionY() == gameManager.getNumberOfRows()-2) {
@@ -221,17 +225,34 @@ public class MainActivity extends AppCompatActivity {
 
 
 
+    public void changeLayoutOfMainCharacterIMG(int currentLane, int newLane){
+
+        RelativeLayout currentRelativeLayout = relativeLayouts[6][currentLane];
+        currentRelativeLayout.removeView(main_IMG_character);
+        RelativeLayout newRelativeLayout = relativeLayouts[6][newLane];
+        newRelativeLayout.addView(main_IMG_character);
+
+    }
+
+
+
     public void checkCollosion(Obstacle obstacle){
 
         boolean collosion = gameManager.checkCollosionInGameManager(obstacle);
         if(collosion) {
-            refreshHeartImages();
-            vibration();
-            createToast();
-            //sound
+            collosionHappendUI();
         }
 
     }
+
+    public void collosionHappendUI(){
+
+        refreshHeartImages();
+        vibration();
+        createToast();
+        //sound
+    }
+
 
 
     public void refreshHeartImages(){
@@ -256,10 +277,10 @@ public class MainActivity extends AppCompatActivity {
         Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
         // Vibrate for 500 milliseconds
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            v.vibrate(VibrationEffect.createOneShot(300, VibrationEffect.DEFAULT_AMPLITUDE));
+            v.vibrate(VibrationEffect.createOneShot(VIBRATIONTIMING, VibrationEffect.DEFAULT_AMPLITUDE));
         } else {
             //deprecated in API 26
-            v.vibrate(300);
+            v.vibrate(VIBRATIONTIMING);
         }
 
     }

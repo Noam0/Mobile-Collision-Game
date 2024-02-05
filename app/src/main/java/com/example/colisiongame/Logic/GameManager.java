@@ -1,4 +1,6 @@
 package com.example.colisiongame.Logic;
+import android.util.Log;
+
 import com.example.colisiongame.Model.Obstacle;
 import com.example.colisiongame.Model.mainCharacter;
 
@@ -40,6 +42,7 @@ public class GameManager {
     public void addObstacle (Obstacle obstacle){
         if(numberOfObstacles < maxNumberOfObstacles ) {
             obstacles.add(obstacle);
+            numberOfObstacles++;
         }
     }
 
@@ -80,6 +83,7 @@ public class GameManager {
 
     public void removeObstacle (Obstacle obstacle){
         obstacles.remove(obstacle);
+        numberOfObstacles--;
     }
 
     public boolean checkCollosionInGameManager(Obstacle obstacle){
@@ -87,6 +91,19 @@ public class GameManager {
             numOfCollosions++;
             life--;
             return true;
+        }
+
+        return false;
+    }
+
+    public Boolean checkCollosionWhenMainCharacterMove(){
+
+        for(Obstacle obstacle : obstacles){
+            if(this.mainCharacter.getPositionX() == obstacle.getPositionX() && this.mainCharacter.getPositionY()-1 == obstacle.getPositionY()){
+                numOfCollosions++;
+                life--;
+                return true;
+            }
         }
 
         return false;
