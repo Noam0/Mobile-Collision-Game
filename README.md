@@ -5,8 +5,9 @@
    The inspiration behind the design of the app is drawn from the heroic story of Rachel from the city of Ofakim on the seventh of October.</p>
   
 <p>-All objects were created and designed using Photoshop and the Notability app by me</p>
-https://github.com/Noam0/Mobile-Collosion-Game/assets/101128914/bf26553c-81ca-41e5-8aba-085a69691258
 
+<p><strong>Video Explanation About The Code:</strong></p>
+https://www.youtube.com/watch?v=LaSOk0cuXRY
 
 
 ![collisongameScreenShot](https://github.com/Noam0/Mobile-Collosion-Game/assets/101128914/2a1f6fdf-0daf-4c05-b53e-353cbc010eea)
