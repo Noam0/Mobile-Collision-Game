@@ -14,6 +14,7 @@ https://www.youtube.com/watch?v=LaSOk0cuXRY
 
 
 <p><strong>Screen Shots:</strong></p>
+
 ![collisongameScreenShot](https://github.com/Noam0/Mobile-Collosion-Game/assets/101128914/2a1f6fdf-0daf-4c05-b53e-353cbc010eea)
 ![collisongameScreenShot2](https://github.com/Noam0/Mobile-Collosion-Game/assets/101128914/012fdabf-e821-4de7-9581-2555b26d04e0)
 
