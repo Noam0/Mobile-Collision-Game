@@ -139,24 +139,19 @@ public class MainActivity extends AppCompatActivity {
 
     private void startGameLoop() {
         handler.postDelayed(new Runnable() {
-
             @Override
             public void run() {
-
                 if (!isGameRunning) {
                     return; // Stop the loop if the game is not running
                 }
-
-                ObstacleViewMovement(); //move the obstacle one line below each time
-                startGameLoop();
-
+                ObstacleViewMovement(); // Move the obstacle one line below each time
+                handler.postDelayed(this, MAINLOOPTIMING); // Schedule the next iteration
                 int randomDisplay = generateRandomNumber();
                 if (randomDisplay == 1 && gameManager.getObstacles().size() < gameManager.getMaxNumberOfObstacles()){
                     createNewObstacle();
                 }
-
             }
-        }, MAINLOOPTIMING); // TIMIMG OF THE OBSTACLES
+        }, MAINLOOPTIMING); // Initial delay
     }
 
     public void ObstacleViewMovement() {
